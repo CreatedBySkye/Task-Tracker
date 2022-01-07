@@ -1,5 +1,6 @@
 /* frontend/src/index.css  */
- 
+@import url('https://fonts.googleapis.com/css2?family=Elsie+Swash+Caps:wght@400;900&display=swap');
+
 body {
     margin: 0;
     padding: 0;
@@ -9,9 +10,12 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     background-color: #282c34;
+
   }
   .todo-title {
     cursor: pointer;
+    
+  
   }
   .completed-todo {
     text-decoration: line-through;
@@ -29,6 +33,15 @@ body {
   }
 
 
+h1.task-title {
+  text-align: center;
+  color: white;
+  font-family: 'Elsie Swash Caps', cursive;
+  font-size: 50px;
+  padding: 20px 20px 20px 20px;
+  margin-top: 30px;
+}
 
-
-  
+div.card.p-3 {
+  box-shadow: 2px 20px 70px teal;
+  }
