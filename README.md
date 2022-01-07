@@ -1,1 +1,3 @@
-# To-Do-App
+# Task Tracker 
+
+Task Tracker is a simple CRUD application gives users a platform to store all of their day-to-day tasks in once convenient location, allowing them create, edit, update, and delete tasks as needed. Task Tracker also offers a great feature that allows users to organize their tasks by which ones have been taken care of ('completed') and what still needs to be done ('incomplete'). As they complete tasks, they can update the status of the task accordingly. This feature, in it's glorious simplicity, is a fantastic way for users to visualize what needs to be done for the day, week, or month ahead in order manage their schedules more effectively. That way, even in the very busy hustle and bustle of everyday life, you can always feel rest assured that you will never miss any important events, meetings, appointments, or the like!
