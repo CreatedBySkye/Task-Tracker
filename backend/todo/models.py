@@ -1,4 +1,5 @@
 from django.db import models
+from rest_framework.authentication import SessionAuthentication
 
 # This is my 'Todo' model where we define each property required for each Todo post
 
@@ -10,3 +11,9 @@ class Todo(models.Model):
 
     def _str_(self):
         return self.title
+
+
+class CsrfExemptSessionAuthentication(SessionAuthentication):
+
+    def enforce_csrf(self, request):
+        return  # To not perform the csrf check previously happening

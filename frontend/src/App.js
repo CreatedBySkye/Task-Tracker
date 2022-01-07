@@ -1,45 +1,81 @@
 import React, { Component } from "react";
-
-
-// Here we are hardcoding some todo posts, these will be temporary values until items are fetched from the backend
-const todoItems = [
-  {
-    id: 1,
-    title: "Go to Market",
-    description: "Buy ingredients to prepare dinner",
-    completed: true,
-  },
-  {
-    id: 2,
-    title: "Study",
-    description: "Read Algebra and History textbook for the upcoming test",
-    completed: false,
-  },
-  {
-    id: 3,
-    title: "Sammy's books",
-    description: "Go to library to return Sammy's books",
-    completed: true,
-  },
-  {
-    id: 4,
-    title: "Article",
-    description: "Write article on how to use Django with React",
-    completed: false,
-  },
-];
+import Modal from "./components/Modal";
+import axios from "axios";
 
 class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       viewCompleted: false,
-      todoList: todoItems,
+      todoList: [],
+      modal: false,
+      activeItem: {
+        title: "",
+        description: "",
+        completed: false,
+      },
     };
   }
 
+  componentDidMount() {
+    this.refreshList();
+  }
+
+// the refreshList() function is called each time an API request is completed. It updates Todo list to display the most recent list of added items 
+// this is a reusable function
+  refreshList = () => {
+    axios
+      .get("/api/todos/")
+      .then((res) => this.setState({ todoList: res.data }))
+      .catch((err) => console.log(err));
+  };
+
+  toggle = () => {
+    this.setState({ modal: !this.state.modal });
+  };
+
+// handleSubmit() function is responsible for the 'create' and 'update' operations
+  handleSubmit = (item) => {
+    this.toggle();
+// if the item does have an id: 
+    if (item.id) { 
+      axios
+        .put(`/api/todos/${item.id}/`, item) // it selects the corresponding item allowing you to update it
+        .then((res) => this.refreshList()); // then it refreshes the page to show the most updated list of Todos
+      return;
+    }
+    // if the item passed as the parameter doesn't have an id:
+    axios
+      .post("/api/todos/", item) // the function will create a new todo
+      .then((res) => this.refreshList()); // then it will update 
+  };
+
+
+  // this function handles deleting an item
+
+  handleDelete = (item) => {
+    axios
+      .delete(`/api/todos/${item.id}/`) // selects the item by its corresponding ID and deletes it
+      .then((res) => this.refreshList()); // then refreshes the todo list
+  };
+
+
+  // creates an item 
+  createItem = () => {
+    const item = { title: "", description: "", completed: false };
+
+    this.setState({ activeItem: item, modal: !this.state.modal });
+  };
+
+
+  // edits an item 
+  editItem = (item) => {
+    this.setState({ activeItem: item, modal: !this.state.modal });
+  };
+
+
   displayCompleted = (status) => {
-    if (status) {
+    if (status) { 
       return this.setState({ viewCompleted: true });
     }
 
@@ -47,22 +83,21 @@ class App extends Component {
   };
 
 
-
   // The renderTabList function renders two spans that will assist in controlling which set of items are displayed 
   renderTabList = () => {
     return (
       <div className="nav nav-tabs">
-        {/* Clicking on the 'Completed' tab will display the completed tasks */}
+         {/* Clicking on the 'Completed' tab will display the completed tasks */}
         <span
-          className={this.state.viewCompleted ? "nav-link active" : "nav-link"} 
           onClick={() => this.displayCompleted(true)}
+          className={this.state.viewCompleted ? "nav-link active" : "nav-link"}
         >
           Complete
         </span>
-        {/* Clicking on the 'Incomplete' tab will display the incomplete tasks */}
+         {/* Clicking on the 'Incomplete' tab will display the incomplete tasks */}
         <span
-          className={this.state.viewCompleted ? "nav-link" : "nav-link active"}
           onClick={() => this.displayCompleted(false)}
+          className={this.state.viewCompleted ? "nav-link" : "nav-link active"}
         >
           Incomplete
         </span>
@@ -92,11 +127,13 @@ class App extends Component {
         <span>
           <button
             className="btn btn-secondary mr-2"
+            onClick={() => this.editItem(item)}
           >
             Edit
           </button>
           <button
             className="btn btn-danger"
+            onClick={() => this.handleDelete(item)}
           >
             Delete
           </button>
@@ -115,13 +152,11 @@ class App extends Component {
               <div className="mb-4">
                 <button
                   className="btn btn-primary"
+                  onClick={this.createItem}
                 >
                   Add task
                 </button>
               </div>
-
-         
-                {/* Clicking on the 'Incomplete' tab will display the incompleted tasks */}
               {this.renderTabList()}
               <ul className="list-group list-group-flush border-top-0">
                 {this.renderItems()}
@@ -129,6 +164,13 @@ class App extends Component {
             </div>
           </div>
         </div>
+        {this.state.modal ? (
+          <Modal
+            activeItem={this.state.activeItem}
+            toggle={this.toggle}
+            onSave={this.handleSubmit}
+          />
+        ) : null}
       </main>
     );
   }
